@@ -1,6 +1,6 @@
-. ./Build-YamlPipelineTemplate.ps1
-. ./Get-YamlPipeline.ps1
-. ./Get-YamlPipelineRun.ps1
-. ./Invoke-YamlPipeline.ps1
-. ./Set-Context.ps1
-. ./Start-YamlPipeline.ps1
+. $PSScriptRoot/Build-YamlPipelineTemplate.ps1
+. $PSScriptRoot/Get-YamlPipeline.ps1
+. $PSScriptRoot/Get-YamlPipelineRun.ps1
+. $PSScriptRoot/Invoke-YamlPipeline.ps1
+. $PSScriptRoot/Set-Context.ps1
+. $PSScriptRoot/Start-YamlPipeline.ps1
