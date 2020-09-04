@@ -1,4 +1,4 @@
-param (
+function Invoke-YamlPipeline (
     [Parameter(Mandatory)]
     [Int]
     $PipelineId,
@@ -18,27 +18,28 @@ param (
     [PSCustomObject]
     $Context = $AzureDevOpsContext
 )
-
-$initialRunResult = ./Start-YamlPipeline.ps1 -PipelineId $PipelineId -YamlTemplateParameters $YamlTemplateParameters -FullBranchReferenceName $FullBranchReferenceName -Context $Context
-
-Write-Verbose -Message "Pipeline run id is '$($initialRunResult.Id)'."
-
-for ($timeSlept = 0; $timeSlept -lt $TimeoutSeconds; $timeSlept += $PollingIntervalSeconds)
 {
-    $runResult = ./Get-YamlPipelineRun.ps1 -PipelineId $PipelineId -RunId $initialRunResult.Id -Context $Context
+    $initialRunResult = Start-YamlPipeline.ps1 -PipelineId $PipelineId -YamlTemplateParameters $YamlTemplateParameters -FullBranchReferenceName $FullBranchReferenceName -Context $Context
 
-    Write-Verbose -Message "Pipeline run state is '$($runResult.State)'."
+    Write-Verbose -Message "Pipeline run id is '$($initialRunResult.Id)'."
 
-    if ("completed" -eq $runResult.State)
+    for ($timeSlept = 0; $timeSlept -lt $TimeoutSeconds; $timeSlept += $PollingIntervalSeconds)
     {
-        Write-Verbose -Message "Pipeline run result is '$($runResult.Result)'."
+        $runResult = Get-YamlPipelineRun.ps1 -PipelineId $PipelineId -RunId $initialRunResult.Id -Context $Context
 
-        return $runResult
+        Write-Verbose -Message "Pipeline run state is '$($runResult.State)'."
+
+        if ("completed" -eq $runResult.State)
+        {
+            Write-Verbose -Message "Pipeline run result is '$($runResult.Result)'."
+
+            return $runResult
+        }
+
+        Write-Verbose -Message "Pipeline is still running. Waiting '$PollingIntervalSeconds' seconds more."
+
+        Start-Sleep -Seconds $PollingIntervalSeconds
     }
 
-    Write-Verbose -Message "Pipeline is still running. Waiting '$PollingIntervalSeconds' seconds more."
-
-    Start-Sleep -Seconds $PollingIntervalSeconds
+    throw [System.TimeoutException] "The timeout provided has expired and the operation has not been completed."
 }
-
-throw [System.TimeoutException] "The timeout provided has expired and the operation has not been completed."

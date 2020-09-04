@@ -1,4 +1,4 @@
-param (
+function Start-YamlPipeline (
     [Parameter(Mandatory)]
     [Int]
     $PipelineId,
@@ -12,12 +12,12 @@ param (
     [PSCustomObject]
     $Context = $AzureDevOpsContext
 )
+{
+    $branchReference = if (-not [String]::IsNullOrWhiteSpace($FullBranchReferenceName)) { $FullBranchReferenceName } else { "refs/heads/master" }
 
-$branchReference = if (-not [String]::IsNullOrWhiteSpace($FullBranchReferenceName)) { $FullBranchReferenceName } else { "refs/heads/master" }
+    $convertedTemplateParameters = ConvertTo-Json $YamlTemplateParameters
 
-$convertedTemplateParameters = ConvertTo-Json $YamlTemplateParameters
-
-$requestBody = @"
+    $requestBody = @"
 {
     "resources": {
         "repositories": {
@@ -30,15 +30,16 @@ $requestBody = @"
 }
 "@
 
-$uri = "https://dev.azure.com/$($Context.Organization)/$($Context.Project)/_apis/pipelines/$PipelineId/runs?api-version=$($Context.ApiVersion)"
+    $uri = "https://dev.azure.com/$($Context.Organization)/$($Context.Project)/_apis/pipelines/$PipelineId/runs?api-version=$($Context.ApiVersion)"
 
-Write-Verbose -Message "Performing request on '$uri'."
+    Write-Verbose -Message "Performing request on '$uri'."
 
-$run = Invoke-RestMethod `
-    -Uri $uri `
-    -Body $requestBody `
-    -ContentType "application/json" `
-    -Method "Post" `
-    -Headers @{ "Authorization" = "Basic $($Context.Base64PrivateAccessToken)" }
+    $run = Invoke-RestMethod `
+        -Uri $uri `
+        -Body $requestBody `
+        -ContentType "application/json" `
+        -Method "Post" `
+        -Headers @{ "Authorization" = "Basic $($Context.Base64PrivateAccessToken)" }
 
-return $run
+    return $run
+}

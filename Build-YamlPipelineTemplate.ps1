@@ -1,4 +1,4 @@
-param (
+function Build-YamlPipelineTemplate (
     [Parameter(Mandatory)]
     [Int]
     $PipelineId,
@@ -16,16 +16,16 @@ param (
     [PSCustomObject]
     $Context = $AzureDevOpsContext
 )
+{
+    $branchReference = if (-not [String]::IsNullOrWhiteSpace($FullBranchReferenceName)) { $FullBranchReferenceName } else { "refs/heads/master" }
 
-$branchReference = if (-not [String]::IsNullOrWhiteSpace($FullBranchReferenceName)) { $FullBranchReferenceName } else { "refs/heads/master" }
+    $convertedTemplateParameters = ConvertTo-Json $YamlTemplateParameters
 
-$convertedTemplateParameters = ConvertTo-Json $YamlTemplateParameters
+    $escapedBackslashesTemplate = $YamlTemplate -replace "\\", "\\"
+    $escapedQuotesTemplate = $escapedBackslashesTemplate -replace "`"", "\`""
+    $escapedNewLinesTemplate = $escapedQuotesTemplate -replace [Environment]::NewLine, "\n"
 
-$escapedBackslashesTemplate = $YamlTemplate -replace "\\", "\\"
-$escapedQuotesTemplate = $escapedBackslashesTemplate -replace "`"", "\`""
-$escapedNewLinesTemplate = $escapedQuotesTemplate -replace [Environment]::NewLine, "\n"
-
-$requestBody = @"
+    $requestBody = @"
 {
     "resources": {
         "repositories": {
@@ -40,17 +40,18 @@ $requestBody = @"
 }
 "@
 
-Write-Debug -Message "Request's body is $requestBody"
+    Write-Debug -Message "Request's body is $requestBody"
 
-$uri = "https://dev.azure.com/$($Context.Organization)/$($Context.Project)/_apis/pipelines/$PipelineId/runs?api-version=$($Context.ApiVersion)"
+    $uri = "https://dev.azure.com/$($Context.Organization)/$($Context.Project)/_apis/pipelines/$PipelineId/runs?api-version=$($Context.ApiVersion)"
 
-Write-Verbose -Message "Performing request on '$uri'."
+    Write-Verbose -Message "Performing request on '$uri'."
 
-$result = Invoke-RestMethod `
-    -Uri $uri `
-    -Body $requestBody `
-    -ContentType "application/json" `
-    -Method "Post" `
-    -Headers @{ "Authorization" = "Basic $($Context.Base64PrivateAccessToken)" }
+    $result = Invoke-RestMethod `
+        -Uri $uri `
+        -Body $requestBody `
+        -ContentType "application/json" `
+        -Method "Post" `
+        -Headers @{ "Authorization" = "Basic $($Context.Base64PrivateAccessToken)" }
 
-return $result
+    return $result
+}
