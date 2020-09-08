@@ -10,6 +10,8 @@ function Get-YamlPipelineRun (
     $Context = (Get-Context)
 )
 {
+    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
+
     $uri = "https://dev.azure.com/$($Context.Organization)/$($Context.Project)/_apis/pipelines/$PipelineId/runs/$($RunId)?api-version=$($Context.ApiVersion)"
 
     Write-Verbose -Message "Performing request on '$uri'."

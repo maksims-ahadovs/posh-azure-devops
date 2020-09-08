@@ -13,6 +13,8 @@ function Start-YamlPipelineRun (
     $Context = (Get-Context)
 )
 {
+    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
+
     $branchReference = if (-not [String]::IsNullOrWhiteSpace($FullBranchReferenceName)) { $FullBranchReferenceName } else { "refs/heads/master" }
 
     $convertedTemplateParameters = ConvertTo-Json $YamlTemplateParameters

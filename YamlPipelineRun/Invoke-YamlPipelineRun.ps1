@@ -19,6 +19,8 @@ function Invoke-YamlPipelineRun (
     $Context = (Get-Context)
 )
 {
+    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
+
     $initialRunResult = Start-YamlPipelineRun -PipelineId $PipelineId -YamlTemplateParameters $YamlTemplateParameters -FullBranchReferenceName $FullBranchReferenceName -Context $Context
 
     Write-Verbose -Message "Pipeline run id is '$($initialRunResult.Id)'."
