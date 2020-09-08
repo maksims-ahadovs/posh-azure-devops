@@ -19,7 +19,7 @@ function Invoke-YamlPipelineRun (
     $Context = (Get-Context)
 )
 {
-    $initialRunResult = Start-YamlPipeline -PipelineId $PipelineId -YamlTemplateParameters $YamlTemplateParameters -FullBranchReferenceName $FullBranchReferenceName -Context $Context
+    $initialRunResult = Start-YamlPipelineRun -PipelineId $PipelineId -YamlTemplateParameters $YamlTemplateParameters -FullBranchReferenceName $FullBranchReferenceName -Context $Context
 
     Write-Verbose -Message "Pipeline run id is '$($initialRunResult.Id)'."
 
