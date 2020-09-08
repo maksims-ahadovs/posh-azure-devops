@@ -1,4 +1,4 @@
-function Invoke-YamlPipeline (
+function Invoke-YamlPipelineRun (
     [Parameter(Mandatory)]
     [Int]
     $PipelineId,
