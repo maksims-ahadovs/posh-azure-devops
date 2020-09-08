@@ -16,7 +16,7 @@ function Invoke-YamlPipeline (
     $PollingIntervalSeconds = 20,
 
     [PSCustomObject]
-    $Context = $AzureDevOpsContext
+    $Context = (Get-Context)
 )
 {
     $initialRunResult = Start-YamlPipeline -PipelineId $PipelineId -YamlTemplateParameters $YamlTemplateParameters -FullBranchReferenceName $FullBranchReferenceName -Context $Context

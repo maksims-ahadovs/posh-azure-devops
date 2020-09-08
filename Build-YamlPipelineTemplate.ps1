@@ -14,7 +14,7 @@ function Build-YamlPipelineTemplate (
     $FullBranchReferenceName,
 
     [PSCustomObject]
-    $Context = $AzureDevOpsContext
+    $Context = (Get-Context)
 )
 {
     $branchReference = if (-not [String]::IsNullOrWhiteSpace($FullBranchReferenceName)) { $FullBranchReferenceName } else { "refs/heads/master" }

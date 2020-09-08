@@ -3,7 +3,7 @@ function Get-YamlPipeline (
     $PipelineId,
 
     [PSCustomObject]
-    $Context = $AzureDevOpsContext
+    $Context = (Get-Context)
 )
 {
     $uri = "https://dev.azure.com/$($Context.Organization)/$($Context.Project)/_apis/pipelines/$($PipelineId)?api-version=$($Context.ApiVersion)"
