@@ -5,5 +5,6 @@
 . $PSScriptRoot/YamlPipelineRun/Invoke-YamlPipelineRun.ps1
 . $PSScriptRoot/YamlPipelineRun/Start-YamlPipelineRun.ps1
 
-. $PSScriptRoot/Build-YamlPipelineTemplate.ps1
+. $PSScriptRoot/YamlPipelineTemplate/Build-YamlPipelineTemplate.ps1
+
 . $PSScriptRoot/Get-YamlPipeline.ps1
