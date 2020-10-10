@@ -21,7 +21,13 @@ function Build-YamlPipelineTemplate (
 
     $branchReference = if (-not [String]::IsNullOrWhiteSpace($FullBranchReferenceName)) { $FullBranchReferenceName } else { "refs/heads/master" }
 
-    $convertedTemplateParameters = ConvertTo-Json $YamlTemplateParameters
+    $convertedTemplateParameters = @{}
+    foreach ($parameter in $YamlTemplateParameters.GetEnumerator())
+    {
+        $convertedTemplateParameters[$parameter.Key] = ConvertTo-Json -InputObject $parameter.Value -Compress
+    }
+
+    $jsonTemplateParameters = ConvertTo-Json $convertedTemplateParameters
 
     $escapedBackslashesTemplate = $YamlTemplate -replace "\\", "\\"
     $escapedQuotesTemplate = $escapedBackslashesTemplate -replace "`"", "\`""
@@ -36,7 +42,7 @@ function Build-YamlPipelineTemplate (
             }
         }
     },
-    "templateParameters": $convertedTemplateParameters,
+    "templateParameters": $jsonTemplateParameters,
     "previewRun": true,
     "yamlOverride": "$escapedNewLinesTemplate"
 }
