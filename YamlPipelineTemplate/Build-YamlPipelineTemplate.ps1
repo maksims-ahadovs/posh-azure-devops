@@ -23,9 +23,7 @@ function Build-YamlPipelineTemplate (
 
     $convertedTemplateParameters = ConvertTo-YamlPipelineParameterJson -YamlTemplateParameters $YamlTemplateParameters
 
-    $escapedBackslashesTemplate = $YamlTemplate -replace "\\", "\\"
-    $escapedQuotesTemplate = $escapedBackslashesTemplate -replace "`"", "\`""
-    $escapedNewLinesTemplate = $escapedQuotesTemplate -replace [Environment]::NewLine, "\n"
+    $convertedTemplate = ConvertTo-YamlPipelineTemplateJson -YamlTemplate $YamlTemplate
 
     $requestBody = @"
 {
@@ -38,7 +36,7 @@ function Build-YamlPipelineTemplate (
     },
     "templateParameters": $convertedTemplateParameters,
     "previewRun": true,
-    "yamlOverride": "$escapedNewLinesTemplate"
+    "yamlOverride": "$convertedTemplate"
 }
 "@
 
