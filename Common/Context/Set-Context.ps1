@@ -7,20 +7,37 @@ function Set-Context (
     [String]
     $Project,
 
-    [Parameter(Mandatory)]
+    [Parameter(Mandatory, ParameterSetName = "CommandLine")]
     [String]
     $PrivateAccessToken,
+
+    [Parameter(Mandatory, ParameterSetName = "EnvironmentVariables")]
+    [String]
+    $PrivateAccessTokenEnvironmentVariableName,
 
     [String]
     $ApiVersion = "6.0-preview"
 )
 {
+    $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
+
     $variableName = "AzureDevOpsContext"
+
+    if ($PrivateAccessTokenEnvironmentVariableName)
+    {
+        $environmentVariable = Get-ChildItem -Path "Env:/$PrivateAccessTokenEnvironmentVariableName"
+
+        $inputedPrivateAccessToken = $environmentVariable.Value
+    }
+    else
+    {
+        $inputedPrivateAccessToken = $PrivateAccessToken
+    }
 
     $variableValue = [PSCustomObject]@{
         Organization = $Organization
         Project = $Project
-        Base64PrivateAccessToken = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(":$PrivateAccessToken"))
+        Base64PrivateAccessToken = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(":$inputedPrivateAccessToken"))
         ApiVersion = $ApiVersion
     }
 
