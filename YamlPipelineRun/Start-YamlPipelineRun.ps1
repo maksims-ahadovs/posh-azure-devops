@@ -17,7 +17,7 @@ function Start-YamlPipelineRun (
 
     $branchReference = if (-not [String]::IsNullOrWhiteSpace($FullBranchReferenceName)) { $FullBranchReferenceName } else { "refs/heads/master" }
 
-    $convertedTemplateParameters = ConvertTo-Json $YamlTemplateParameters
+    $convertedTemplateParameters = ConvertTo-YamlPipelineParameterJson -YamlTemplateParameters $YamlTemplateParameters
 
     $requestBody = @"
 {
