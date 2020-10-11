@@ -1,3 +1,5 @@
+. $PSScriptRoot/Common/ConvertTo-YamlPipelineParameterJson.ps1
+
 . $PSScriptRoot/Context/Get-Context.ps1
 . $PSScriptRoot/Context/Set-Context.ps1
 
