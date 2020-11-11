@@ -10,7 +10,14 @@ function ConvertTo-YamlPipelineParameterJson (
 
     foreach ($parameter in $YamlTemplateParameters.GetEnumerator())
     {
-        $convertedTemplateParameters[$parameter.Key] = ConvertTo-Json -InputObject $parameter.Value -Compress
+        if ($parameter.Value -is [String])
+        {
+            $convertedTemplateParameters[$parameter.Key] = $parameter.Value
+        }
+        else
+        {
+            $convertedTemplateParameters[$parameter.Key] = ConvertTo-Json -InputObject $parameter.Value -Compress
+        }
     }
 
     $jsonTemplateParameters = ConvertTo-Json $convertedTemplateParameters
